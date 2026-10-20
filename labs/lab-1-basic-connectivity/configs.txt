@@ -1,0 +1,89 @@
+! ===== R1 =====
+enable
+configure terminal
+hostname R1
+no ip domain-lookup
+enable secret class
+service password-encryption
+line console 0
+ password cisco
+ login
+ exit
+banner login #Authorized access only#
+interface gigabitEthernet 0/0
+ description LAN A
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+interface gigabitEthernet 0/1
+ description Link to R2
+ ip address 10.0.0.1 255.255.255.252
+ no shutdown
+ exit
+ip route 192.168.20.0 255.255.255.0 10.0.0.2
+end
+copy running-config startup-config
+
+! ===== R2 =====
+enable
+configure terminal
+hostname R2
+no ip domain-lookup
+enable secret class
+service password-encryption
+line console 0
+ password cisco
+ login
+ exit
+banner login #Authorized access only#
+interface gigabitEthernet 0/0
+ description LAN B
+ ip address 192.168.20.1 255.255.255.0
+ no shutdown
+interface gigabitEthernet 0/1
+ description Link to R1
+ ip address 10.0.0.2 255.255.255.252
+ no shutdown
+ exit
+ip route 192.168.10.0 255.255.255.0 10.0.0.1
+end
+copy running-config startup-config
+
+! ===== SW1 =====
+enable
+configure terminal
+hostname SW1
+no ip domain-lookup
+enable secret class
+service password-encryption
+line console 0
+ password cisco
+ login
+ exit
+banner login #Authorized access only#
+interface vlan 1
+ ip address 192.168.10.2 255.255.255.0
+ no shutdown
+ exit
+ip default-gateway 192.168.10.1
+end
+copy running-config startup-config
+
+! ===== SW2 =====
+enable
+configure terminal
+hostname SW2
+no ip domain-lookup
+enable secret class
+service password-encryption
+line console 0
+ password cisco
+ login
+ exit
+banner login #Authorized access only#
+interface vlan 1
+ ip address 192.168.20.2 255.255.255.0
+ no shutdown
+ exit
+ip default-gateway 192.168.20.1
+end
+copy running-config startup-config
